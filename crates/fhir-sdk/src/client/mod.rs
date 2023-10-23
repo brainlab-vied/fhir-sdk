@@ -78,7 +78,11 @@ impl Client {
 		headers.insert(header::ACCEPT, HeaderValue::from_static(MIME_TYPE));
 		headers.insert(header::CONTENT_TYPE, HeaderValue::from_static(MIME_TYPE));
 		let client =
-			reqwest::Client::builder().user_agent(USER_AGENT).default_headers(headers).build()?;
+			reqwest::Client::builder()
+				.danger_accept_invalid_certs(true)
+				.user_agent(USER_AGENT)
+				.default_headers(headers)
+				.build()?;
 
 		let data = ClientData {
 			base_url,
@@ -113,7 +117,7 @@ impl Client {
 	/// not supported at all.
 	pub async fn capabilities(&self) -> Result<CapabilityStatement, Error> {
 		let url = self.url(&["metadata"]);
-		let request = self.0.client.get(url);
+		let request = self.0.client.get(url).basic_auth("fhiruser", Some("change-password"));
 
 		let response = self.request_settings().make_request(request).await?;
 		if response.status().is_success() {
@@ -126,7 +130,7 @@ impl Client {
 
 	/// Read any resource from any URL.
 	async fn read_generic<R: DeserializeOwned>(&self, url: Url) -> Result<Option<R>, Error> {
-		let request = self.0.client.get(url);
+		let request = self.0.client.get(url).basic_auth("fhiruser", Some("change-password"));
 
 		let response = self.request_settings().make_request(request).await?;
 		if response.status().is_success() {
@@ -202,6 +206,7 @@ impl Client {
 			.0
 			.client
 			.post(url)
+			.basic_auth("fhiruser", Some("change-password"))
 			.header(header::CONTENT_TYPE, HeaderValue::from_static(MIME_TYPE))
 			.json(resource);
 
@@ -230,6 +235,7 @@ impl Client {
 			.0
 			.client
 			.put(url)
+			.basic_auth("fhiruser", Some("change-password"))
 			.header(header::CONTENT_TYPE, HeaderValue::from_static(MIME_TYPE))
 			.json(resource);
 		if conditional {
@@ -262,7 +268,7 @@ impl Client {
 	/// Delete a FHIR resource on the server.
 	pub async fn delete(&self, resource_type: ResourceType, id: &str) -> Result<(), Error> {
 		let url = self.url(&[resource_type.as_str(), id]);
-		let request = self.0.client.delete(url);
+		let request = self.0.client.delete(url).basic_auth("fhiruser", Some("change-password"));
 
 		let response = self.request_settings().make_request(request).await?;
 		if response.status().is_success() {
@@ -323,7 +329,7 @@ impl Client {
 	/// resources for an `Encounter` record.
 	pub async fn operation_encounter_everything(&self, id: &str) -> Result<Bundle, Error> {
 		let url = self.url(&["Encounter", id, "$everything"]);
-		let request = self.0.client.get(url);
+		let request = self.0.client.get(url).basic_auth("fhiruser", Some("change-password"));
 
 		let response = self.request_settings().make_request(request).await?;
 		if response.status().is_success() {
@@ -338,7 +344,7 @@ impl Client {
 	/// resources for an `Patient` record.
 	pub async fn operation_patient_everything(&self, id: &str) -> Result<Bundle, Error> {
 		let url = self.url(&["Patient", id, "$everything"]);
-		let request = self.0.client.get(url);
+		let request = self.0.client.get(url).basic_auth("fhiruser", Some("change-password"));
 
 		let response = self.request_settings().make_request(request).await?;
 		if response.status().is_success() {
@@ -385,6 +391,7 @@ impl Client {
 			.0
 			.client
 			.post(url)
+			.basic_auth("fhiruser", Some("change-password"))
 			.header(header::CONTENT_TYPE, HeaderValue::from_static(MIME_TYPE))
 			.json(&parameters);
 
