@@ -14,7 +14,7 @@ repository = "https://github.com/FlixCoder/fhir-sdk"
 version = "0.6.0"
 
 [features]
-default = ["r5", "builders"]
+default = ["r4b", "builders"]
 builders = ["dep:typed-builder"]
 r4b = []
 r5 = []

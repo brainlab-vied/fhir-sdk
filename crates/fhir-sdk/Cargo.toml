@@ -13,7 +13,7 @@ repository = "https://github.com/FlixCoder/fhir-sdk"
 version = "0.6.0"
 
 [features]
-default = ["r5", "builders", "client", "docs"]
+default = ["r4b", "builders", "client", "docs"]
 client = ["dep:async-trait", "dep:futures", "dep:reqwest", "dep:serde", "dep:serde_json", "dep:thiserror", "dep:tokio-retry", "dep:uuid"]
 builders = ["fhir-model/builders"]
 r4b = ["fhir-model/r4b"]
